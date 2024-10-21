@@ -1,5 +1,6 @@
 const express = require("express");
 const OpenAI = require('openai');
+const axios = require('axios')
 require('dotenv').config()
 const app = express();
 app.use(express.json());
@@ -12,8 +13,8 @@ async function getCryptoDetails({
     time_end,
     time_start
 }) {
-    return fetch(
-        process.env.CMC_URL+'/v2/cryptocurrency/quotes/historical' +
+    return axios.get(
+        process.env.CMC_URL+'/v2/cryptocurrency/quotes/historical?symbol=' +
         symbol +
         '&time_start=' +
         time_start +
@@ -24,7 +25,7 @@ async function getCryptoDetails({
                 Accept: 'application/json',
             },
         }
-    ).then((res) => res.json()).then(data => {
+    ).then(({data}) => {
         if (!data?.status?.error_code) return data?.data?.[symbol]
         return null;
     });
@@ -41,7 +42,7 @@ app.get('/ask', async (req, res) => {
         model: 'gpt-3.5-turbo',
         messages: [{
                 role: 'system',
-                content: '',
+                content: 'Current time is '+new Date().toString(),
             },
             {
                 role: 'user',
@@ -62,11 +63,11 @@ app.get('/ask', async (req, res) => {
                         },
                         time_start: {
                             type: 'string',
-                            description: 'The starting date or time for which to fetch the price. Should be less than time_end (Unix or ISO 8601).',
+                            description: 'The starting date or time for which to fetch the price. Should be the time specified by the user (Unix or ISO 8601).',
                         },
                         time_end: {
                             type: 'string',
-                            description: 'The ending date or time for which to fetch the price. SHould be more than time_start (Unix or ISO 8601).',
+                            description: 'The ending date or time for which to fetch the price. SHould be more than the time specified by the user (Unix or ISO 8601).',
                         },
                     },
                     required: ['symbol', 'date'],
