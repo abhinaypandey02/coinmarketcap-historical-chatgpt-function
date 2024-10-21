@@ -10,16 +10,13 @@ const openai = new OpenAI({
 
 async function getCryptoDetails({
     symbol,
-    time_end,
     time_start
 }) {
     return axios.get(
         process.env.CMC_URL+'/v2/cryptocurrency/quotes/historical?symbol=' +
         symbol +
         '&time_start=' +
-        time_start +
-        '&time_end=' +
-        time_end, {
+        time_start + '&count=2', {
             headers: {
                 'X-CMC_PRO_API_KEY': process.env.CMC_KEY,
                 Accept: 'application/json',
@@ -34,6 +31,7 @@ async function getCryptoDetails({
 async function get_crypto_price(params) {
     const data = await getCryptoDetails(params)
     return data.quotes.reduce((acc, curr) => acc + (curr.quote.USD.price / data.quotes.length), 0);
+
 }
 
 app.get('/ask', async (req, res) => {
@@ -64,10 +62,6 @@ app.get('/ask', async (req, res) => {
                         time_start: {
                             type: 'string',
                             description: 'The starting date or time for which to fetch the price. Should be the time specified by the user (Unix or ISO 8601).',
-                        },
-                        time_end: {
-                            type: 'string',
-                            description: 'The ending date or time for which to fetch the price. SHould be more than the time specified by the user (Unix or ISO 8601).',
                         },
                     },
                     required: ['symbol', 'date'],
