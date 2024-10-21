@@ -13,7 +13,7 @@ async function getCryptoDetails({
     time_start
 }) {
     return fetch(
-        process.env.CMC_URL +
+        process.env.CMC_URL+'/v2/cryptocurrency/quotes/historical' +
         symbol +
         '&time_start=' +
         time_start +
