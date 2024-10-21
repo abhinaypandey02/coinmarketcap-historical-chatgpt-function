@@ -1,6 +1,6 @@
-import express from "express";
-import OpenAI from 'openai';
-import 'dotenv/config'
+const express = require("express");
+const OpenAI = require('openai');
+require('dotenv').config()
 const app = express();
 app.use(express.json());
 const openai = new OpenAI({
@@ -80,5 +80,5 @@ app.get('/ask', async (req, res) => {
     res.send(result.choices[0].message.content)
 
 })
-export default app
+module.exports=app
 app.listen(8000)
