@@ -2,7 +2,6 @@
   "name": "coinmarketcap-historical-chatgpt-function",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "module": "es6",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
